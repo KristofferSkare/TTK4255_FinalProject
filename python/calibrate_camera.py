@@ -18,8 +18,8 @@ output_folder = dirname(image_path_pattern)
 #
 # TASK: Specify these
 #
-board_size = PLACEHOLDER # Number of internal corners of the checkerboard (see tutorial)
-square_size = PLACEHOLDER # Real world length of the sides of the squares (see HW6 Task 1.5)
+board_size = [7,4] # Number of internal corners of the checkerboard (see tutorial)
+square_size = 1 # Real world length of the sides of the squares (see HW6 Task 1.5)
 
 #
 # Tip:
