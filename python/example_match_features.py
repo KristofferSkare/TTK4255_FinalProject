@@ -14,8 +14,8 @@ from hw5_sol.estimate_E_ransac import *
 from hw5_sol.F_from_E import *
 #from draw_point_cloud import draw_point_cloud
 
-I1 = cv.imread('../data_hw5_ext/IMG_8210.jpg', cv.IMREAD_GRAYSCALE)
-I2 = cv.imread('../data_hw5_ext/IMG_8211.jpg', cv.IMREAD_GRAYSCALE)
+I1 = cv.imread('../data_hw5_ext/IMG_8209.jpg', cv.IMREAD_GRAYSCALE)
+I2 = cv.imread('../data_hw5_ext/IMG_8210.jpg', cv.IMREAD_GRAYSCALE)
 
 # NB! This script uses a very small number of features so that it runs quickly.
 # You will want to pass other options to SIFT_create. See the documentation:
@@ -47,7 +47,7 @@ xy1 = np.linalg.inv(K)@uv1
 xy2 = np.linalg.inv(K)@uv2
 
 if ransac:
-    e = epipolar_distance(F_from_E(np.loadtxt('hw5_sol\E.txt'), K), uv1, uv2)
+    e = epipolar_distance(F_from_E(np.loadtxt('E.txt'), K), uv1, uv2)
     plt.figure('Histogram of epipolar distances')
     plt.hist(np.absolute(e), range=[0, 40], bins=100, cumulative=True)
     plt.title('Cumulative histogram of |epipolar distance| using good E')
@@ -62,7 +62,7 @@ if ransac:
     num_trials = get_num_ransac_trials(8, confidence, inlier_fraction)
 
     # Alternatively, hard-coded trial count
-    num_trials = 2000
+    #num_trials = 2000
 
     E,inliers = estimate_E_ransac(xy1, xy2, K, distance_threshold, num_trials)
     uv1 = uv1[:,inliers]
@@ -92,7 +92,7 @@ X = best_X1
 print('Best solution: %d/%d points visible' % (best_num_visible, xy1.shape[1]))
 print(I1)
 np.random.seed(123) # Comment out to get a random selection each time
-#draw_correspondences(I1, I2, uv1, uv2, F_from_E(E, K), sample_size=8)
+draw_correspondences(I1, I2, uv1, uv2, F_from_E(E, K), sample_size=8)
 draw_point_cloud(X, I1, uv1,  xlim=[-5,+5], ylim=[-5,+5], zlim=[1,15])
 plt.show()
 #end of direct import hw5
