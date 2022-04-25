@@ -24,7 +24,7 @@ def task2_1_a():
     # NB! This script uses a very small number of features so that it runs quickly.
     # You will want to pass other options to SIFT_create. See the documentation:
     # https://docs.opencv.org/4.x/d7/d60/classcv_1_1SIFT.html
-    sift = cv.SIFT_create(nfeatures=30000)
+    sift = cv.SIFT_create(nfeatures=30000, sigma=1.6, nOctaveLayers=3, edgeThreshold=12, contrastThreshold=0.04)
     kp1, desc1 = sift.detectAndCompute(I1, None)
     kp2, desc2 = sift.detectAndCompute(I2, None)
     kp1 = np.array([kp.pt for kp in kp1])
@@ -32,7 +32,7 @@ def task2_1_a():
 
     # NB! You will want to experiment with different options for the ratio test and
     # "unique" (cross-check).
-    index_pairs, match_metric = match_features(desc1, desc2, max_ratio=1, unique=True)
+    index_pairs, match_metric = match_features(desc1, desc2, max_ratio=0.85, unique=True)
     print(index_pairs[:10])
     print('Found %d matches' % index_pairs.shape[0])
 
@@ -120,4 +120,4 @@ def task2_1_d():
     draw_point_cloud(X, I1_RGB, uv1, xlim=[-3,+3], ylim=[-3,+1], zlim=[1,5])
     plt.show()
 
-task2_1_d()
+task2_1_a()
