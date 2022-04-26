@@ -12,8 +12,8 @@ from hw5.triangulate_many import triangulate_many
 from os.path import join
 
 I = cv.imread('../data_hw5_ext/IMG_8209.jpg', cv.IMREAD_GRAYSCALE)
-model_points = np.loadtxt("3D_points.txt").T
-model_desc = np.loadtxt("descriptors.txt")
+model_points = np.loadtxt("3D_points.txt")
+model_desc = np.loadtxt("descriptors.txt", dtype=np.float32)
 
 folder = '../data_hw5_ext/calibration'
 
@@ -28,12 +28,14 @@ def localize_camera():
 
     index_pairs, match_metric = match_features(desc, model_desc, max_ratio=0.85, unique=True)
     index_pairs = index_pairs[np.argsort(match_metric)]
-
+    print(index_pairs.shape)
     desc_matched = desc[index_pairs[:,0]]
     model_desc_matched = model_desc[index_pairs[:,1]]
     
     kp_matched = kp[index_pairs[:,0]]
     model_points_matched = model_points[index_pairs[:,1]]
+
+    print(kp_matched.shape, model_points_matched.shape)
   
 
 localize_camera()
