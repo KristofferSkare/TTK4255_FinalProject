@@ -7,9 +7,10 @@
 import matplotlib.pyplot as plt
 import numpy as np
 from draw_point_cloud import *
+from task3_1 import localize_camera
 
 model = '../example_localization'
-query = '../example_localization/query/IMG_8210'
+query = '../data_hw5_ext/IMG_8228.jpg'
 
 # 3D points [4 x num_points].
 X = np.loadtxt(f'{model}/X.txt')
@@ -17,7 +18,8 @@ X = np.loadtxt(f'{model}/X.txt')
 # Model-to-query transformation.
 # If you estimated the query-to-model transformation,
 # then you need to take the inverse.
-T_m2q = np.loadtxt(f'{query}_T_m2q.txt')
+#T_m2q = np.loadtxt(f'{query}_T_m2q.txt')
+T_m2q = np.array(localize_camera(query), dtype='float')
 
 # If you have colors for your point cloud model...
 colors = np.loadtxt(f'{model}/c.txt') # RGB colors [num_points x 3].
