@@ -1,4 +1,5 @@
 from decimal import InvalidContext
+from cv2 import Rodrigues
 import matplotlib.pyplot as plt
 import numpy as np
 import cv2 as cv
@@ -49,20 +50,33 @@ def localize_camera(query):
 
     def resfun(p): 
         u_hat, _ = cv.projectPoints(model_points_matched_inliers, p[:3], p[3:], K, dc)
+        R, _ = Rodrigues(p[:3].reshape((3,1)))
+        #u_hat = project(K,R@model_points_matched_inliers+ p[3:].reshape((3,1)) )
         vector_errors = (u_hat - kp_matched_inliers)[:,0,:] # the indexing here is because OpenCV likes to add extra dimensions.
         scalar_errors = np.linalg.norm(vector_errors, axis=1)
-        print(sum(scalar_errors))
+        #print(sum(scalar_errors))
         return scalar_errors
-
-    init = np.array([.5, -.5, 0, 1, -1 ,5])
-    #init = np.array([float(rvec[0]),float(rvec[1]), float(rvec[2]), float(tvec[0]), float(tvec[1]), float(tvec[2])]) #transform rvec and tvec into a flat vector for resfun
-    ##print(init)
+ 
+    init = np.array([.5, -.5, 0, 1, -1 ,5]) #these were for testing only. No other local optimum found
+    init = np.array([float(rvec[0]),float(rvec[1]), float(rvec[2]), float(tvec[0]), float(tvec[1]), float(tvec[2])]) #transform rvec and tvec into a flat vector for resfun
+    print(init)
     #print(init[:3])
 
     #find best paramters
     p = least_squares(resfun, x0=init, method='lm').x
     print(init)
     zero_rot = rotate_x(0)@rotate_y(0)@rotate_z(0)
-    T = zero_rot@rotate_x(p[0])@rotate_y([1])@rotate_z(p[2])@translate(p[3], p[4], p[5])
+    R, _ = Rodrigues(p[:3])
+    print(R)
+    #T = np.hstack((R, np.array([[p[3], p[4], p[5],1]]).T))
+    T = translate(p[3], p[4], p[5])
+    T_vec = np.array([T[:3,3]]).T
+    #print(R.shape)
+
+    T = np.hstack((R, T_vec))
+    T = np.vstack((T, np.array([0, 0, 0, 1])))
+    #T = R + translate(p[3], p[4], p[5])[:, 3]
+    print(T)
+    #T = R + translate(p[3], p[4], p[5])
     return T
 
